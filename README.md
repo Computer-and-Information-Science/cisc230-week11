@@ -1,2 +1,3 @@
-# cpp-debug
-Build/Run/Debug C++ File with Codespaces
+# CISC230 - Week 11 Examples
+
+Example programs for week 11 on *Greedy Algorithms*.
