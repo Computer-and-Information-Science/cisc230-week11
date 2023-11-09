@@ -31,7 +31,7 @@ class TugOfWar {
 private:
 	Team team1, team2;
 public:
-	TugOfWar (const list<int> weights);
+	TugOfWar (list<int> weights);
 	int diff_size () const { return abs(team1.size() - team2.size()); }
 	int diff_weight () const { return abs(team1.weight() - team2.weight()); }
 	void print () const;
@@ -79,7 +79,7 @@ void Team::print (const string& label) const {
 
 // Constructor, given a list of weights, assigns the weights to two teams as
 // a solution to the problem.
-TugOfWar::TugOfWar (const list<int> weights) {
+TugOfWar::TugOfWar (list<int> weights) {
 	// No real algorithm here other than to alternate players to team as they
 	// appear in the given list.
 	bool t1 = true;
