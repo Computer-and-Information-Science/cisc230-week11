@@ -15,11 +15,11 @@ private:
 	int sum_weights;
 public:
 	Team () { sum_weights = 0; }
-	void add (int w) { sum_weights += w; push_back(w); }
-	int size () const { return list<int>::size(); }
-	int weight () const { return sum_weights; }
-	list<int> weights () const { return *this; }
-	void print (const string& label) const;
+	void add (int w) { sum_weights += w; push_back(w); } // Add a player to the team
+	int size () const { return list<int>::size(); } // Report number of players on team
+	int weight () const { return sum_weights; } // Report total weight of players on team
+	list<int> weights () const { return *this; } // Return list of weights of players
+	void print (const string& label) const; // Print the team with a leading label
 };
 
 // A class for finding a solution to the tug-of-war problem. The constructor
@@ -31,10 +31,10 @@ class TugOfWar {
 private:
 	Team team1, team2;
 public:
-	TugOfWar (list<int> weights);
-	int diff_size () const { return abs(team1.size() - team2.size()); }
-	int diff_weight () const { return abs(team1.weight() - team2.weight()); }
-	void print () const;
+	TugOfWar (list<int> weights); // Constructor finds solution from list of weights
+	int diff_size () const { return abs(team1.size() - team2.size()); } // Report difference in number of players of teams
+	int diff_weight () const { return abs(team1.weight() - team2.weight()); } // Report difference in total weights of teams
+	void print () const; // Print the solution
 };
 
 void print_list (const string& label, const list<int> weights);
