@@ -1,3 +1,5 @@
+// Three bin-packing algorithms. Each algorithm is implemented as a class
+//	derived from class BinPack.
 #include <iostream>
 #include <list>
 #include <vector>
@@ -46,66 +48,80 @@ public:
 // Output a Bin object to an ostream object.
 ostream& operator<< (ostream& os, const Bin& b) {
 	list<int>::const_iterator i;
-	int count = 0;
-	for (i = b.items.begin(); i != b.items.end(); i++)
-		os << (count++ ? " " : "") << *i;
+	int count = 0; // Used to avoid space before output of first item in bin.
+	// Output each item in the bin as integers spearated by spaces.
+	for (int item: b.items)
+		os << (count++ ? " " : "") << item;
 	return os;
 }
 
 // Output all Bin objects in a BinPack object to an ostream object.
-ostream& operator<< (ostream& os, const BinPack& p) {
-	for (size_t i = 0; i < p.bins.size(); i++)
-		cout << "Bin " << i << ": " << p.bins[i] << endl;
+ostream& operator<< (ostream& os, const BinPack& bp) {
+	int i = 0; // Bin index
+	for (auto bin: bp.bins)
+		cout << "Bin " << i++ << ": " << bin << endl;
 	return os;
 }
 
 void test_binpack (BinPack& bp, const list<int> items) {
-	for (list<int>::const_iterator i = items.begin(); i != items.end(); i++)
-		bp.add_item(*i);
+	// Add all given items to the given BinPack object.
+	for (int item: items)
+		bp.add_item(item);
 	cout << bp;
 }
 
 class BinPackNext : public BinPack {
 public:
-	void add_item (int size) {
-		if (!bins.size() || bins.back().size_max() < size)
+	void add_item (int item) {
+		// If the BinPack object has no bins or the last bin does not
+		//	have sufficient capackty for the item, create a new bin.
+		if (!bins.size() || bins.back().size_max() < item)
 			bins.push_back(Bin());
-		bins.back().add_item(size);
+		bins.back().add_item(item);
 	}
 };
 
 class BinPackFirst : public BinPack {
 public:
-	void add_item (int size) {
-		for (int i = 0; i < bins.size(); i++)
-			if (size <= bins[i].size_max()) {
-				bins[i].add_item(size);
+	void add_item (int item) {
+		// Cycle through all bins, add item to first bin in which the item
+		//	will fit.
+		for (Bin& bin: bins)
+			if (item <= bin.size_max()) {
+				// Item will fit, add it and return.
+				bin.add_item(item);
 				return;
 			}
-		Bin b;
-		b.add_item(size);
-		bins.push_back(b);
+		// Did not find a bin in which item will fit. Create a new bin, add
+		//	the item to the new bin, then add the bin to the BinPack.
+		Bin bin;
+		bin.add_item(item);
+		bins.push_back(bin);
 	}
 };
 
 class BinPackBest : public BinPack {
 public:
-	void add_item (int size) {
-		size_t bin = bins.size();
+	void add_item (int item) {
+		size_t bin_index = bins.size(); // Initialize to one past last bin.
+		// Find the best fit for the item.
 		for (size_t i = 0; i < bins.size(); i++) {
-			if (bin == bins.size() && size <= bins[i].size_max())
-				bin = i;
-			else if (size <= bins[i].size_max() &&
-					bins[i].size_max() < bins[bin].size_max())
-				bin = i;
+			// If no bin found yet and item fits in this bin, save bin_index.
+			if (bin_index == bins.size() && item <= bins[i].size_max())
+				bin_index = i;
+			// If item fits in this bin and a better fit than bin_index, save new bin_index
+			else if (item <= bins[i].size_max() && bins[i].size_max() < bins[bin_index].size_max())
+				bin_index = i;
 		}
-		if (bin == bins.size()) {
-			Bin b;
-			b.add_item(size);
-			bins.push_back(b);
+		// If no bin found in which item will fit, create a new bin, add item to bin, and add bin to BinPack.
+		if (bin_index == bins.size()) {
+			Bin bin;
+			bin.add_item(item);
+			bins.push_back(bin);
 		}
+		// Else add item to the identified bin_index.
 		else
-			bins[bin].add_item(size);
+			bins[bin_index].add_item(item);
 	}
 };
 
